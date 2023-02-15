@@ -3,7 +3,7 @@ from prefect.blocks.system import Secret
 import httpx
 
 @task
-def get_alphavantage(function="TIME_SERIES_INTRADAY", name="IBM", key, interval="5min"):
+def get_alphavantage(function, name, key, interval="5min"):
     return httpx.get(f"https://www.alphavantage.co/query?function={function}&symbol={name}&interval={interval}&apikey={key}")
 
 @task
