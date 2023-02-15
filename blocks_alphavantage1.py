@@ -3,19 +3,18 @@ from prefect.blocks.system import Secret
 import httpx
 
 @task
-def get_alphavantage(function, name, key, interval="5min"):
+def get_alphavantage(function="TIME_SERIES_INTRADAY", name="IBM", key, interval="5min"):
     return httpx.get(f"https://www.alphavantage.co/query?function={function}&symbol={name}&interval={interval}&apikey={key}")
 
 @task
 def get_secret_block(name):
-    secret_block = Secret.load(name)# Access the stored secretsecret_block.get()
+    secret_block = Secret.load(name)
     return secret_block
 
 @flow
-def get_info(name, secret_name):
+def get_info(name="IBM", secret_name="alphavantage-1"):
     result = get_alphavantage("TIME_SERIES_INTRADAY", "IBM", get_secret_block(secret_name).get())
-    #print(result.json())
-    #print(result.json().keys())
+    print(f'keys {result.json()["Time Series (5min)"].keys()}')
     price = result.json()["Time Series (5min)"]["2023-02-14 19:55:00"]["1. open"]
     return price
 
